@@ -26,7 +26,7 @@ def make_new_labels(dirr,txt_dir_name,img_dir_name,labels_to_drop=None, reduce_c
 	image_path=os.path.join(folder_path,image_directory)
 		
 	if not os.path.exists(txt_path):
-		os.makedirs(txt_path) #create a folder.
+		os.makedirs(txt_path)
 	
 	if not os.path.exists(image_path):
 		os.makedirs(image_path)
@@ -39,7 +39,7 @@ def make_new_labels(dirr,txt_dir_name,img_dir_name,labels_to_drop=None, reduce_c
 		
 		if separate_txt:
 
-			if file.endswith(".txt"): # harcy ene vor karoxa arajiny png exni, u miangamic convert ene txt chhasni.
+			if file.endswith(".txt"): 
 								
 				t = os.path.join(txt_path,file)	
 										
@@ -57,7 +57,7 @@ def make_new_labels(dirr,txt_dir_name,img_dir_name,labels_to_drop=None, reduce_c
 							
 							df.drop(df[df[0]==row[0]].index,inplace=True,axis=0)
 
-				with open(t,"wt", encoding='ascii') as stream: # this creates the file, t is the path.
+				with open(t,"wt", encoding='ascii') as stream: 
 					
 					np.savetxt(stream, df.values, fmt='%f')
 
@@ -88,7 +88,7 @@ def make_new_labels(dirr,txt_dir_name,img_dir_name,labels_to_drop=None, reduce_c
 			if count_txt==txt_to_convert/2:
 				
 				# halfway makes sure there are no multiple print statements, if png and txt do not follow each other.
-				if halfway: print("txt file Conversion halfway done!") # when there is no else.
+				if halfway: print("txt file Conversion halfway done!") #  no else.
 				halfway=False
 
 		elif img_to_convert!=None and separate_txt!=True and separate_images:
