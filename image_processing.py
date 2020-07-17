@@ -71,8 +71,7 @@ def conversion():
 		xmax = float(960 * xmax)
 		ymin = float(540 * ymin)
 		ymax = float(540 * ymax)
-
-				#print(xmin, ymin, xmax, ymax)		
+		
 		
 		bb=BoundingBox(x1=xmin, x2=xmax, y1=ymin, y2=ymax)
 		bb_list.append(bb)
@@ -107,7 +106,6 @@ def conversion():
 	print(file_path)
 	sk_io.imsave(file_path, image_aug)
 	ia.imshow(image_aug)
-
 	
 if __name__=="__main__":		
 	conversion()
