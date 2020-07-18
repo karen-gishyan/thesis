@@ -4,10 +4,43 @@ import imgaug as ia
 from imgaug.augmentables.bbs import BoundingBox, BoundingBoxesOnImage
 from imgaug import augmenters as iaa 
 from collections import defaultdict
-
+from PIL import Image
 import numpy as np
 from skimage import io as sk_io
 ia.seed(1)
+
+
+
+def separate_file(directory,sep_file="txt"):
+	
+	"""
+	sep file take txt, jpg.
+	"""
+
+	folder_name="Seperated images" if sep_file=="jpg" else "Seperated txt"  
+	new_dir=os.path.join(os.path.split(directory)[0],folder_name)
+	if not os.path.exists(new_dir):
+		os.makedirs(new_dir)
+
+	count=0
+	for file in os.listdir(directory):
+		if sep_file=="txt":
+			if file.endswith(".txt"):	
+
+				with open(os.path.join(directory,file),"rt") as lines:
+					with open(os.path.join(new_dir,file),"wt") as stream:
+						for line in lines:
+							stream.write(line)
+				
+
+ 	
+		if sep_file=="jpg":
+			if file.endswith(".jpg"):
+				path=os.path.join(new_dir,file)
+
+				img = Image.open(os.path.join(directory,file))
+				img=img.save(path)
+
 
 
 def conversion(txt_file_directory,image_directory):
@@ -15,8 +48,6 @@ def conversion(txt_file_directory,image_directory):
 	Takes images and annotations from different folders, applies transformation to both the image
 	and annotation, and saves both. 
 	"""
-
-
 
 	# go one level back.
 	img_save_dir=os.path.join(os.path.split(image_directory)[0],"transformed_images") 
@@ -114,12 +145,17 @@ def conversion(txt_file_directory,image_directory):
 
 			count+=1
 			print("{} annotations and images have been transformed!!".format(count))
+			if count==800:
+				break
 
 
-t="C:\\Users\\Կարեն\\Desktop\\Bath Thesis\\sampletxt"
-im="C:\\Users\\Կարեն\\Desktop\\Bath Thesis\\sample image"
+
+img_path="C:\\Users\\Կարեն\\Desktop\\Bath Thesis\\VisDrone2019-DET-train\\images"
+txt_path="C:\\Users\\Կարեն\\Desktop\\Bath Thesis\\VisDrone2019-DET-train\\seperated txt yolo"
+
 
 if __name__=="__main__":		
-	conversion(t,im)
+	conversion(txt_path,img_path)
 
-
+#p="C:\\Users\\Կարեն\\Desktop\\Bath Thesis\\VisDrone2019-DET-train\\annotations_plus_images_yolo"
+#separate_file(p)
