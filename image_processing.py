@@ -4,75 +4,122 @@ import imgaug as ia
 from imgaug.augmentables.bbs import BoundingBox, BoundingBoxesOnImage
 from imgaug import augmenters as iaa 
 from collections import defaultdict
-ia.seed(1)
+
 import numpy as np
 from skimage import io as sk_io
+ia.seed(1)
 
 
-# #path="C:\\Users\\Կարեն\\Desktop\\0000084_02139_d_0000007.jpg"
-# image = imageio.imread(path)
-# image = ia.imresize_single_image(image, (540, 960))
-
-# ia.imshow(bbs.draw_on_image(image, size=3))
-
-# image_aug, bbs_aug = seq(image=image, bounding_boxes=bbs)
-# #ia.imshow(bbs_aug.draw_on_image(image_aug, size=2))
+def conversion(txt_file_directory,image_directory):
+	"""
+	Takes images and annotations from different folders, applies transformation to both the image
+	and annotation, and saves both. 
+	"""
 
 
-image = imageio.imread(os.path.join(os.getcwd(),"0000002_00448_d_0000015.jpg"))
-def conversion():
 
-	path=os.getcwd()
-	file=open(os.path.join(path,'0000002_00448_d_0000015.txt'))
-
-	bb_list=[]
-	l=[]
-	for line in file.readlines():	
-		label=int(line.split()[0])
-		new_line=line.split()[1:] # create a list, then remove the class label.
+	# go one level back.
+	img_save_dir=os.path.join(os.path.split(image_directory)[0],"transformed_images") 
+	txt_sav_dir=os.path.join(os.path.split(txt_file_directory)[0],"transformed_annotations")
 	
-		xmin = max(float(new_line[0]) - float(new_line[2]) / 2, 0)
-		xmax = min(float(new_line[0]) + float(new_line[2]) / 2, 1)
-		ymin = max(float(new_line[1]) - float(new_line[3]) / 2, 0)
-		ymax = min(float(new_line[1]) + float(new_line[3]) / 2, 1)
+	if not os.path.exists(img_save_dir) and not os.path.exists(txt_sav_dir):
+		os.makedirs(img_save_dir)
+		os.makedirs(txt_sav_dir)
 
-		xmin = float(960 * xmin)
-		xmax = float(960 * xmax)
-		ymin = float(540 * ymin)
-		ymax = float(540 * ymax)
+    # sepereted directories is good to make sure we loop simultanouesly.
+	iterable= zip(os.listdir(image_directory),os.listdir(txt_file_directory)) 
+	
+	count=0
+	for img,txt in iterable:
+		bb_list=[]
+		l=[]
+		label_list=[]
+
+		"""
+		the img and txt have need to match exactly.
+		"""
+		if img.endswith(".jpg") and txt.endswith(".txt") and img.strip(".jpg")== txt.strip(".txt"):
+
+			image = imageio.imread(os.path.join(image_directory,img))
+
+			file=open(os.path.join(txt_file_directory,txt))
+			for line in file.readlines():	
+
+				"""
+				read from the yolo format, convert to pascal voc, which matches the bounding box requirements of 
+				imgaug's BoundingBox class.
+				"""
+			
+				label=int(line.split()[0])
+
+				# create a list, then remove the class label.
+				new_line=line.split()[1:] 
+			
+				xmin = max(float(new_line[0]) - float(new_line[2]) / 2, 0)
+				xmax = min(float(new_line[0]) + float(new_line[2]) / 2, 1)
+				ymin = max(float(new_line[1]) - float(new_line[3]) / 2, 0)
+				ymax = min(float(new_line[1]) + float(new_line[3]) / 2, 1)
+
+				xmin = round(float(image.shape[1] * xmin))
+				xmax = round(float(image.shape[1] * xmax))
+				ymin = round(float(image.shape[0] * ymin))
+				ymax = round(float(image.shape[0] * ymax))
+								
+				bb=BoundingBox(x1=xmin, x2=xmax, y1=ymin, y2=ymax)
+				bb_list.append(bb)
+				label_list.append(label)
+	
+			bbs = BoundingBoxesOnImage(bb_list,shape=image.shape)
+			
+			seq = iaa.Sequential([
+				iaa.GammaContrast(1.5),
+				iaa.AdditiveGaussianNoise(scale=(10, 60)),
+				iaa.Affine(rotate=(-30, 30))])
+
+			image_aug, bbs_aug = seq(image=image, bounding_boxes=bbs)
+
+			for i in range(len(bbs.bounding_boxes)):
 				
-		bb=BoundingBox(x1=xmin, x2=xmax, y1=ymin, y2=ymax)
-		bb_list.append(bb)
+				"""
+				Convert the  voc bounding box format back to yolo format.
+				"""
+				after=bbs_aug.bounding_boxes[i]
+				xcen = float((after.x1 + after.x2)) / 2 / image.shape[1]
+				ycen = float((after.y1 + after.y2)) / 2 / image.shape[0]
 
-	bbs = BoundingBoxesOnImage(bb_list,shape=(540, 960, 3))
-	
-	seq = iaa.Sequential([
-		iaa.GammaContrast(1.5),
-		iaa.AdditiveGaussianNoise(scale=(10, 60)),
-		iaa.Affine(rotate=(-30, 30))])
+				w = float((after.x2 - after.x1)) / image.shape[1]
+				h = float((after.y2 - after.y1)) / image.shape[0]
 
-	image_aug, bbs_aug = seq(image=image, bounding_boxes=bbs)
+				l1=[label,xcen, ycen, w, h] 
 
-	for i in range(len(bbs.bounding_boxes)):
-		
-		after=bbs_aug.bounding_boxes[i]
-		xcen = float((after.x1 + after.x2)) / 2 / 960
-		ycen = float((after.y1 + after.y2)) / 2 / 540
+				l.append(l1)
 
-		w = float((after.x2 - after.x1)) / 960
-		h = float((after.y2 - after.y1)) / 540
+			label_array=np.array(label_list)
+			yolo_array=np.array(l)
+			
+			yolo_array[:,0]=np.array(list(map(lambda x: int(x),label_array)))
 
-		l1=[label,xcen, ycen, w, h] # label.
+			# if does not exists, creates then saves.
+			with open(os.path.join(txt_sav_dir,txt),"wt", encoding='ascii') as stream: 		
+				#print("Reached")
+				# format types for all columns.
+				fmt= '%d', '%1.7f', '%1.7f', '%1.7f','%1.7f' 
+				np.savetxt(stream, yolo_array, fmt=fmt)
+				#print("Saved")
+			
+			#save images.
+			file_path = os.path.join(img_save_dir, img)
+			sk_io.imsave(file_path, image_aug)
+			#ia.imshow(image_aug)
 
-		l.append(l1)
+			count+=1
+			print("{} annotations and images have been transformed!!".format(count))
 
-	with open(os.path.join(os.getcwd(),"imp.txt"),"wt", encoding='ascii') as stream: 		
-		np.savetxt(stream, np.array(l), fmt='%f')	
 
-	file_path = os.path.join(os.getcwd(), "imp.png")
-	print(file_path)
-	sk_io.imsave(file_path, image_aug)
-	ia.imshow(image_aug)
-	
+t="C:\\Users\\Կարեն\\Desktop\\Bath Thesis\\sampletxt"
+im="C:\\Users\\Կարեն\\Desktop\\Bath Thesis\\sample image"
+
 if __name__=="__main__":		
-	conversion()
+	conversion(t,im)
+
+
