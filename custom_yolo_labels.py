@@ -4,7 +4,7 @@ import os
 from PIL import Image
 
 
-def make_new_labels(path_to_dir,*combine_values,separate_txt=True,separate_images=False,
+def make_new_labels(path_to_dir,combine_values=None,separate_txt=True,separate_images=False,
 	labels_to_drop=None,incremenet_labels=False, 
 	change_labels_function=None,number_of_txt_to_convert=None,number_of_img_to_separate=None,
 	**combine_list): 
@@ -52,12 +52,12 @@ def make_new_labels(path_to_dir,*combine_values,separate_txt=True,separate_image
 				df=pd.read_csv(os.path.join(path_to_dir,file),sep=" ",header=None,index_col=None)														  
 				
 				#checks for the labels to be changed based on *combine_values and *combine_list.
-				if len(combine_values)==len(combine_list):
+				# if len(combine_values)==len(combine_list):
 
-					for i in range(len(combine_values)):
+				# 	for i in range(len(combine_values)):
 						
-						values=list(combine_list.values())[i]
-						df[0]=list(map(lambda x: combine_values[i] if x in values else x,df[0]))
+				# 		values=list(combine_list.values())[i]
+				# 		df[0]=list(map(lambda x: combine_values[i] if x in values else x,df[0]))
 		
 				if change_labels_function !=None:
 
@@ -153,9 +153,9 @@ def make_new_labels(path_to_dir,*combine_values,separate_txt=True,separate_image
 	print("Number of images converted:{0}.".format(count_img))
 
 	
-sample="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trial"
+sample="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\yolo_labels_converted"
 
-lambda_function= lambda x : x/2
-make_new_labels(sample,20,30,list1=[2,3],list2=[1,7,8],incremenet_labels=True) 
-
-
+lambda_function= lambda x : 7 if x==9 else x
+#make_new_labels(sample,20,30,list1=[2,3],list2=[1,7,8],incremenet_labels=True) 
+imp_path="C:\\Users\\gishy\\OneDrive - University of Bath\\Bath Thesis\\Bath Thesis\\Final\\yolo_labels_converted"
+make_new_labels(imp_path,change_labels_function=lambda_function)

@@ -94,12 +94,9 @@ class TrainTestValid:
 				else:
 					continue
 
-	
-	def train_test_valid_split(self):
-		pass
 
 
 
 path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample\\practice\\Images and Annotations XML"
 #path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample\\practice\\Images and Annotations YOLO"
-inst=TrainTestValid(0.7,0.2,path,valid_size=0.1).train_test_split(format=".xml")
+#inst=TrainTestValid(0.7,0.2,path,valid_size=0.1).train_test_split(format=".xml")

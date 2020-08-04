@@ -17,8 +17,8 @@ def conversion(txt_file_directory,image_directory):
 	"""
 
 	# go one level back.
-	img_save_dir=os.path.join(os.path.split(image_directory)[0],"yolo_annotations_transformed_images_2000_5c") 
-	txt_sav_dir=os.path.join(os.path.split(txt_file_directory)[0],"yolo_annotations_transformed_annotations_2000_5c")
+	img_save_dir=os.path.join(os.path.split(image_directory)[0],"images_transformed") 
+	txt_sav_dir=os.path.join(os.path.split(txt_file_directory)[0],"yolo_annotations_transformed")
 	
 	if not os.path.exists(img_save_dir) and not os.path.exists(txt_sav_dir):
 		os.makedirs(img_save_dir)
@@ -41,6 +41,7 @@ def conversion(txt_file_directory,image_directory):
 			image = imageio.imread(os.path.join(image_directory,img))
 
 			file=open(os.path.join(txt_file_directory,txt))
+			
 			for line in file.readlines():	
 
 				"""
@@ -58,10 +59,10 @@ def conversion(txt_file_directory,image_directory):
 				ymin = max(float(new_line[1]) - float(new_line[3]) / 2, 0)
 				ymax = min(float(new_line[1]) + float(new_line[3]) / 2, 1)
 
-				xmin = round(float(image.shape[1] * xmin))
-				xmax = round(float(image.shape[1] * xmax))
-				ymin = round(float(image.shape[0] * ymin))
-				ymax = round(float(image.shape[0] * ymax))
+				xmin = float(image.shape[1] * xmin)
+				xmax = float(image.shape[1] * xmax)
+				ymin = float(image.shape[0] * ymin)
+				ymax = float(image.shape[0] * ymax)
 								
 				bb=BoundingBox(x1=xmin, x2=xmax, y1=ymin, y2=ymax)
 				bb_list.append(bb)
@@ -69,24 +70,26 @@ def conversion(txt_file_directory,image_directory):
 	
 			bbs = BoundingBoxesOnImage(bb_list,shape=image.shape)
 			
-			seq = iaa.Sequential([
-				iaa.GammaContrast(1.5),
-				iaa.AdditiveGaussianNoise(scale=(10, 60)),
-				iaa.Affine(rotate=(-30, 30))])
+			# seq = iaa.Sequential([
+			# 	iaa.GammaContrast(1.5),
+			# 	iaa.AdditiveGaussianNoise(scale=(10, 60)),
+			# 	iaa.Affine(rotate=(-30, 30))])
 
+			seq=iaa.Sequential([ iaa.Resize(416)])
 			image_aug, bbs_aug = seq(image=image, bounding_boxes=bbs)
-
 			for i in range(len(bbs.bounding_boxes)):
 				
 				"""
 				Convert the  voc bounding box format back to yolo format.
 				"""
 				after=bbs_aug.bounding_boxes[i]
-				xcen = float((after.x1 + after.x2)) / 2 / image.shape[1]
-				ycen = float((after.y1 + after.y2)) / 2 / image.shape[0]
+				
 
-				w = float((after.x2 - after.x1)) / image.shape[1]
-				h = float((after.y2 - after.y1)) / image.shape[0]
+				xcen = float((after.x1 + after.x2)) / 2 / image_aug.shape[1] 
+				ycen = float((after.y1 + after.y2)) / 2 / image_aug.shape[0]
+
+				w = float((after.x2 - after.x1)) / image_aug.shape[1]
+				h = float((after.y2 - after.y1)) / image_aug.shape[0]
 
 				l1=[label,xcen, ycen, w, h] 
 
@@ -99,11 +102,11 @@ def conversion(txt_file_directory,image_directory):
 
 			# if does not exists, creates then saves.
 			with open(os.path.join(txt_sav_dir,txt),"wt", encoding='ascii') as stream: 		
-				#print("Reached")
+				
 				# format types for all columns.
 				fmt= '%d', '%1.7f', '%1.7f', '%1.7f','%1.7f' 
 				np.savetxt(stream, yolo_array, fmt=fmt)
-				#print("Saved")
+				
 			
 			#save images.
 			file_path = os.path.join(img_save_dir, img)
@@ -112,31 +115,11 @@ def conversion(txt_file_directory,image_directory):
 
 			count+=1
 			print("{} annotations and images have been transformed!!".format(count))
-			# if count==2:
-			# 	break
 
 
-img_path="C:\\Users\\gishy\\OneDrive - University of Bath\\Bath Thesis\\Bath Thesis\\VisDrone2019-DET-train\\Annotations-All Categories\\experiment"
-txt_path="C:\\Users\\gishy\\OneDrive - University of Bath\\Bath Thesis\\Bath Thesis\\VisDrone2019-DET-train\\Annotations-All Categories\\experiment2"
 
+img_path="C:\\Users\\gishy\\OneDrive - University of Bath\\Bath Thesis\\Bath Thesis\\Final\\4.1 Low Quality VIsdrone images"
+txt_path="C:\\Users\\gishy\\OneDrive - University of Bath\\Bath Thesis\\Bath Thesis\\Final\\4.2 Low Quality VIsdrone with correct labels-separated"
 
 # if __name__=="__main__":		
 # 	conversion(txt_path,img_path)
-
-
-
-
-
-
-
-
-
-
-		
-
-
-		
-
-
-
-
