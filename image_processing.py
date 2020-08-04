@@ -119,6 +119,7 @@ def conversion(txt_file_directory,image_directory):
 img_path="C:\\Users\\gishy\\OneDrive - University of Bath\\Bath Thesis\\Bath Thesis\\VisDrone2019-DET-train\\Annotations-All Categories\\experiment"
 txt_path="C:\\Users\\gishy\\OneDrive - University of Bath\\Bath Thesis\\Bath Thesis\\VisDrone2019-DET-train\\Annotations-All Categories\\experiment2"
 
+
 # if __name__=="__main__":		
 # 	conversion(txt_path,img_path)
 
