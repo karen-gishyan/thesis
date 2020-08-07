@@ -50,8 +50,9 @@ def convert(image_path,annotation_path,save_path):
             writer.save(targetFile=save_path  + "/" + annotation_no_txt + ".xml")
 
 
-annotation_path = "C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample1"
-image_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample2"
-save_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample4"
+if __name__=="__main__":
+    annotation_path = "C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample1"
+    image_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample2"
+    save_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample4"
 
-convert(image_path,annotation_path,save_path)
+    convert(image_path,annotation_path,save_path)
