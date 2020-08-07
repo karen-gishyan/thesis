@@ -48,10 +48,7 @@ def convert(image_path,annotation_path,save_path):
 
 
             writer.save(targetFile=save_path  + "/" + annotation_no_txt + ".xml")
-            count+=1
-            if count==5:
-                print("Done")
-                break
+
 
 annotation_path = "C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample1"
 image_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample2"
