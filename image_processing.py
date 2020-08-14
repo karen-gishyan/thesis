@@ -118,8 +118,8 @@ def conversion(txt_file_directory,image_directory):
 
 
 
-img_path="C:\\Users\\gishy\\OneDrive - University of Bath\\Bath Thesis\\Bath Thesis\\Final\\4.1 Low Quality VIsdrone images"
-txt_path="C:\\Users\\gishy\\OneDrive - University of Bath\\Bath Thesis\\Bath Thesis\\Final\\4.2 Low Quality VIsdrone with correct labels-separated"
+img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_images"
+txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_annotations"
 
-# if __name__=="__main__":		
-# 	conversion(txt_path,img_path)
+if __name__=="__main__":		
+ 	conversion(txt_path,img_path)
