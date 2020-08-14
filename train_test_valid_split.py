@@ -222,9 +222,9 @@ def pytorch_split(path_to_images,path_to_annotations,train_size,test_size,valid_
 	print("There are {} train, {} test, and {} valid_images.".format(n_train_images,n_test_images,n_val_images)) 
 
 				
-sample_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample\\sample2\\images"
-sample_path2="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample\\sample1"
-pytorch_split(sample_path,sample_path2,4,1,1)
+sample_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\images\\Images"
+sample_path2="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\annotations"
+pytorch_split(sample_path,sample_path2,700,200,95)
 
 
 
