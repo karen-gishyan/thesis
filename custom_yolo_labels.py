@@ -153,9 +153,12 @@ def make_new_labels(path_to_dir,combine_values=None,separate_txt=True,separate_i
 	print("Number of images converted:{0}.".format(count_img))
 
 	
-sample="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\yolo_labels_converted"
+#sample="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\yolo_labels_converted"
 
-lambda_function= lambda x : 7 if x==9 else x
+#lambda_function= lambda x : 7 if x==9 else x
+lambda_function= lambda x : x-1
+
 #make_new_labels(sample,20,30,list1=[2,3],list2=[1,7,8],incremenet_labels=True) 
-imp_path="C:\\Users\\gishy\\OneDrive - University of Bath\\Bath Thesis\\Bath Thesis\\Final\\yolo_labels_converted"
-make_new_labels(imp_path,change_labels_function=lambda_function)
+path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\images smaller than 768p_adjusted"
+
+make_new_labels(path,change_labels_function=lambda_function,labels_to_drop=[0,7,8,10,11])
