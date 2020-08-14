@@ -144,22 +144,88 @@ class TrainTestValid:
 #---- #train,test,spllit with pytorch.
 import torch
 import torchvision
+import torch
+import shutil
+import sys
+torch.manual_seed(0)
 
-def train_test_valid_split(path_to_images,train_size,test_size,valid_size):
+def pytorch_split(path_to_images,path_to_annotations,train_size,test_size,valid_size):
 	
+	"""
+	images and annotations are stored separately.
+	"""
+	n_images=sum([1 for image in os.listdir(path_to_images)])
+	print("The number of images is {}.".format(n_images))
 
 	pytorch_path=os.path.dirname(path_to_images)
+	root_dir=os.path.split(path_to_annotations)[0] #equivalent to the one above.
+	#print(root_dir)
+	train_annotations= os.path.join(root_dir,"train_annotations")
+	test_annotations=  os.path.join(root_dir,"test_annotations")
+	valid_annotations= os.path.join(root_dir,"valid_annotations")
 
-	full_dataset = torchvision.datasets.ImageFolder(root=pytorch_path)
-	train_dataset, test_dataset,valid = torch.utils.data.random_split(full_dataset, [train_size, test_size,valid_size])
+	train_images=os.path.join(root_dir,"train_images")
+	test_images=os.path.join(root_dir,"test_images")
+	valid_images=os.path.join(root_dir,"valid_images")
 
 	
-	#you can obtain the images with indices.
+	dir_list=[train_annotations,test_annotations,valid_annotations,train_images,test_images,valid_images]
+
+	for dirr in dir_list:
+		if not os.path.exists(dirr):
+			os.makedirs(dirr)
+
+	full_dataset = torchvision.datasets.ImageFolder(root=pytorch_path)
+	train_dataset, test_dataset,valid_dataset = torch.utils.data.random_split(full_dataset, [train_size, test_size,valid_size])
+
+		
 	for index, image in enumerate(os.listdir(path_to_images)):
 		
+
+		assert(os.path.splitext(image)[1] in [".png",".jpg"])
+
+		full_img_path=os.path.join(path_to_images,image)
+		#print(full_img_path)
+		
+
+		try:
+			full_ann_path=os.path.join(path_to_annotations,os.path.splitext(image)[0])+".txt"
+		
+		except Exception:
+			pass
+
+			try:
+				full_ann_path=os.path.join(path_to_annotations,os.path.splitext(image)[0])+".xml"
+		
+			except:	
+				print("Not a txt or an xml file.")
+
+
 		if index in train_dataset.indices:
-			print(image)
+			
+			shutil.copy(full_ann_path,train_annotations) 
+			shutil.copy(full_img_path,train_images)
+			
+		elif index in test_dataset.indices:
+
+			shutil.copy(full_ann_path,test_annotations)
+			shutil.copy(full_img_path,test_images)
+		
+		else:
+			shutil.copy(full_ann_path,valid_annotations)
+			shutil.copy(full_img_path,valid_images)
+
+	n_train_images=len(os.listdir(train_images))
+	n_test_images=len(os.listdir(test_images))
+	n_val_images=len(os.listdir(valid_images))
+
+	print("There are {} train, {} test, and {} valid_images.".format(n_train_images,n_test_images,n_val_images)) 
+
+				
+sample_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample\\sample2\\images"
+sample_path2="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample\\sample1"
+pytorch_split(sample_path,sample_path2,4,1,1)
 
 
-sample_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample2\\images"
-train_test_valid_split(sample_path,4,1,1)
+
+
