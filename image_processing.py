@@ -126,73 +126,61 @@ seq=iaa.SomeOf((1,2),
 	sometimes(iaa.BlendAlphaFrequencyNoise(foreground=iaa.EdgeDetect(0.75),upscale_method="nearest")),
 
 	sometimes(iaa.BlendAlphaMask(iaa.InvertMaskGen(0.5, iaa.VerticalLinearGradientMaskGen()),
-		iaa.Sequential([iaa.Clouds(),iaa.WithChannels([1, 2])])))
+		iaa.Sequential([iaa.Clouds(),iaa.WithChannels([1, 2])]))),
 
-	sometimes(iaa.BlendAlphaCheckerboard(nb_rows=2, nb_cols=(1, 4),foreground=iaa.AddToHue((-80, 80))))
+	sometimes(iaa.BlendAlphaCheckerboard(nb_rows=2, nb_cols=(1, 4),foreground=iaa.AddToHue((-80, 80)))),
 
 	#important augmenter
-	sometimes(iaa.BlendAlphaVerticalLinearGradient(iaa.AveragePooling(10),start_at=(0.0, 1.0), end_at=(0.0, 1.0)))
+	sometimes(iaa.BlendAlphaVerticalLinearGradient(iaa.AveragePooling(10),start_at=(0.0, 1.0), end_at=(0.0, 1.0))),
 
 	sometimes(iaa.BlendAlphaSimplexNoise(iaa.EdgeDetect(1.0),upscale_method="linear"))
 	
 	])
 
 
+sometimes2=lambda aug: iaa.Sometimes(0.95,aug)
+
+seq2=iaa.SomeOf((1,2),
+	[
+	
+	sometimes2(iaa.AdditiveGaussianNoise(scale=(10, 70))),
+	
+	#sometimes(iaa.AverageBlur(k=(3, 5))), # varying kernel size.
+	
+	sometimes2(iaa.GaussianBlur(sigma=(1.0, 3.0))), # not the same as gaussian noise.
+
+	sometimes2(iaa.MotionBlur(k=10, angle=[-30, 30])),
+	
+	sometimes2(iaa.MeanShiftBlur(spatial_radius=(5.0, 40.0), color_radius=(5.0, 40.0))), # heavy but important augmenter.
+
+	#These three are from contrast module, the above five from  blur module.
+	sometimes2(iaa.HistogramEqualization()),
+
+	sometimes2(iaa.SigmoidContrast(gain=(3, 10), cutoff=(0.4, 0.6))),
+
+	sometimes2(iaa.LinearContrast(alpha=(0.6, 1.4)))
+
+	])
+
+
+seq3=iaa.SomeOf((1,2),
+	[
+	
+	sometimes(iaa.Affine(scale=1.5)), # with 0.1 lets say, gives a user warning of low contrast image.
+ 
+	sometimes(iaa.ElasticTransformation(alpha=(30, 45.0), sigma=5.0)),
+
+	sometimes(iaa.Rot90((1, 3), keep_size=False)), # On 90,270 transformation, the width and height change.
+
+	sometimes(iaa.Rotate((-30, 30))),
+
+	sometimes(iaa.WithPolarWarping(iaa.AveragePooling((2, 7))))
+
+
+	])
+
+
 
 if __name__=="__main__":		
- 	conversion(txt_path,img_path,seq)
+ 	conversion(txt_path,img_path,seq2)
 
-
-
-			
-			# seq = iaa.Sequential([
-			# 	iaa.GammaContrast(1.5),
-			# 	iaa.AdditiveGaussianNoise(scale=(10, 60)),
-			# 	iaa.Affine(rotate=(-30, 30))])  8/18/2020-checked, works fine.
-
-			#seq=iaa.Sequential([ iaa.Resize(416)])
-			#seq=iaa.LinearContrast((0.75, 1.5))#works.
-
-			# seq=iaa.Sequential([iaa.Fliplr(0.9), iaa.Flipud(0.2),   # flipping also transforms the augmentations.
-			# iaa.Sometimes(0.8,iaa.AdditiveGaussianNoise(scale=(10, 60)))]) #works.
-			
-
-			#seq=iaa.BlendAlpha((0.0, 1.0),foreground=iaa.Add(100),background=iaa.Multiply(0.2))
-			#seq=iaa.BlendAlphaCheckerboard(nb_rows=2, nb_cols=(1, 4), foreground=iaa.AddToHue((-100, 100))) # very nice.
-			#seq=iaa.BlendAlphaFrequencyNoise(foreground=iaa.EdgeDetect(1.0),upscale_method="nearest")
-			#seq=iaa.BlendAlphaElementwise((0, 1.0), iaa.AddToHue(100))
-			#seq=iaa.Sequential([iaa.BlendAlphaElementwise((0, 1.0), iaa.AddToHue(100)),iaa.BlendAlphaFrequencyNoise(foreground=iaa.EdgeDetect(1.0),sigmoid_thresh=iap.Normal(10.0, 5.0))])
-			#seq=iaa.FastSnowyLandscape(lightness_threshold=140,lightness_multiplier=2.5)
-			# seq= iaa.BlendAlphaRegularGrid(nb_rows=2, nb_cols=2,
-   #                              foreground=iaa.Multiply(0.0),
-   #                              background=iaa.AveragePooling(8),
-   #                              alpha=[0.0, 0.0, 1.0])
-
-			#seq=iaa.BlendAlphaVerticalLinearGradient(iaa.AddToHue((-100, 100))) #horizontal is similar.
-			#seq=iaa.Dropout(0.25) # should be more part of a blurring technique.
-#			seq=iaa.BlendAlphaFrequencyNoise(foreground=iaa.EdgeDetect(1.0),upscale_method="nearest")
-			#seq=iaa.BlendAlphaRegularGrid(nb_rows=(4, 6), nb_cols=(1, 4),foreground=iaa.Multiply(0.0))
-
-			
-			#iaa.SomeOf((0,5)) between 0 and 5 of the given augmentations per image.
-			# if it includes sometimes, it means 
-
-			# sometimes=lambda aug: iaa.Sometimes(0,33,aug)
-			
-			# iaa.SomeOf((1,3),[sometimes()
-			# 	])
-
-			#seq=iaa.BlendAlphaMask(iaa.InvertMaskGen(0.5, iaa.VerticalLinearGradientMaskGen()),iaa.Sequential([iaa.Clouds(),iaa.WithChannels([1, 2], iaa.Multiply(0.5))]))
-			#seq=iaa.BlendAlphaSimplexNoise(iaa.EdgeDetect(1.0),upscale_method="linear")
-			#seq= iaa.BlendAlpha((0.0, 1.0),foreground=iaa.Add(100),background=iaa.Multiply(0.2))
-			#seq=iaa.GaussianBlur(sigma=(0.0, 5.0))
-			#seq=iaa.MedianBlur(k=(3, 7))
-			#seq=iaa.MotionBlur(k=15, angle=[-45, 45])
-			#seq= iaa.BilateralBlur(d=(3, 10), sigma_color=(10, 250), sigma_space=(10, 250))
-			#seq=iaa.Affine(scale=2.0)
-			#seq = iaa.Affine(shear={"y": (-45, 45)})
-			#seq=iaa.ElasticTransformation(alpha=(0.0, 70.0), sigma=5.0)
-			#seq=iaa.Rot90((1, 3), keep_size=False) # rotates either 90, 180 or 270.
-			#seq=iaa.ScaleX((0.5, 1.5)) #remaps pixels.
-			#seq=iaa.ShearX((-20, 20)) 
-			#=iaa.CLAHE(clip_limit=(1, 10))
