@@ -1,6 +1,7 @@
 from pycocotools.cocoeval import COCOeval
 import json
 import torch
+import os
 
 
 def evaluate_coco(dataset, model, threshold=0.05):
@@ -75,6 +76,19 @@ def evaluate_coco(dataset, model, threshold=0.05):
         coco_eval.evaluate()
         coco_eval.accumulate()
         coco_eval.summarize()
+
+        # import sys
+        # sys.stdout= open(os.path.join("/content/","klog.txt"),"a")
+        # coco_eval.summarize() #send the print output to a txt, ot a csv, with regular printing did not work.
+        # sys.stdout.close()
+
+
+        #modified.
+        from contextlib import redirect_stdout
+        with open(os.path.join("/content/","map_log.txt"), 'a') as txt:
+          with redirect_stdout(txt):
+            coco_eval.summarize()
+
 
         model.train()
 
