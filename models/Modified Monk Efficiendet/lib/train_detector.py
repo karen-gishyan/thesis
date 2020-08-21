@@ -10,6 +10,8 @@ from tensorboardX import SummaryWriter
 import shutil
 import numpy as np
 from tqdm.autonotebook import tqdm
+
+#evaluate_coc
 from mAP_evaluation import evaluate_coco
 
 
@@ -32,7 +34,7 @@ class Detector():
         self.system_dict["dataset"]["val"]["status"] = False;
 
         self.system_dict["params"] = {};
-        self.system_dict["params"]["image_size"] = 512;
+        self.system_dict["params"]["image_size"] = 352; #512
         self.system_dict["params"]["batch_size"] = 8;
         self.system_dict["params"]["num_workers"] = 3;
         self.system_dict["params"]["use_gpu"] = True;
@@ -130,7 +132,7 @@ class Detector():
         self.system_dict["local"]["training_set"] = CocoDataset(root_dir=self.system_dict["dataset"]["train"]["root_dir"] + "/" + self.system_dict["dataset"]["train"]["coco_dir"],
                                                             img_dir = self.system_dict["dataset"]["train"]["img_dir"],
                                                             set_dir = self.system_dict["dataset"]["train"]["set_dir"],
-                                                            transform = transforms.Compose([Normalizer(), Augmenter(), Resizer()]))
+                                                            transform = transforms.Compose([Normalizer(), Resizer()])) #Augmenter(),
         
         self.system_dict["local"]["training_generator"] = DataLoader(self.system_dict["local"]["training_set"], 
                                                                     **self.system_dict["local"]["training_params"]);
@@ -293,6 +295,13 @@ class Detector():
         Returns:
             None
         '''
+        
+        #modified.
+        file_path="/content/info_loss.txt"
+        with open(file_path,"w") as info_file:
+          print("Epoch","Classification_Loss","Regression_Loss","Total_Loss",file=info_file)
+        #
+       
         self.system_dict["output"]["log_path"] = "tensorboard/signatrix_efficientdet_coco";
         self.system_dict["output"]["saved_path"] = model_output_dir;
         self.system_dict["params"]["num_epochs"] = num_epochs;
@@ -342,15 +351,16 @@ class Detector():
                         writer.add_scalar('Train/Total_loss', total_loss, epoch * num_iter_per_epoch + iter)
                         writer.add_scalar('Train/Regression_loss', reg_loss, epoch * num_iter_per_epoch + iter)
                         writer.add_scalar('Train/Classfication_loss (focal loss)', cls_loss, epoch * num_iter_per_epoch + iter)
-
+                        
                     except Exception as e:
                         print(e)
                         continue
-                
+                                
                 #Modified.
                 print('Evaluating dataset')
                 evaluate_coco(self.system_dict["local"]["val_set"], self.system_dict["local"]["model"]) 
-
+                #
+                
                 self.system_dict["local"]["scheduler"].step(np.mean(epoch_loss))
 
                 if epoch % self.system_dict["params"]["val_interval"] == 0:
@@ -379,6 +389,11 @@ class Detector():
                         'Epoch: {}/{}. Classification loss: {:1.5f}. Regression loss: {:1.5f}. Total loss: {:1.5f}'.format(
                             epoch + 1, self.system_dict["params"]["num_epochs"], cls_loss, reg_loss,
                             np.mean(loss)))
+                    
+                    #Modified.
+                    with open (os.path.abspath(file_path),"a") as another:
+                      print(epoch+1,float(cls_loss),float(reg_loss),np.mean(loss),file=another)                 
+  
                     writer.add_scalar('Val/Total_loss', loss, epoch)
                     writer.add_scalar('Val/Regression_loss', reg_loss, epoch)
                     writer.add_scalar('Val/Classfication_loss (focal loss)', cls_loss, epoch)

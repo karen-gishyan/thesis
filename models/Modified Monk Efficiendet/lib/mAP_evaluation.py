@@ -3,6 +3,7 @@ from torchvision import transforms
 from pycocotools.cocoeval import COCOeval
 import json
 import torch
+import os
 
 
 def evaluate_coco(dataset, model, threshold=0.05):
@@ -61,6 +62,14 @@ def evaluate_coco(dataset, model, threshold=0.05):
         coco_eval.evaluate()
         coco_eval.accumulate()
         coco_eval.summarize()
+
+        #modified.
+        from contextlib import redirect_stdout
+        with open(os.path.join("/content/","map_log.txt"), 'a') as txt:
+          with redirect_stdout(txt):
+            coco_eval.summarize()
+
+
 
 
 if __name__ == '__main__':
