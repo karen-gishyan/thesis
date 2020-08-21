@@ -48,9 +48,19 @@ def make_new_labels(path_to_dir,combine_values=None,separate_txt=True,separate_i
 			if file.endswith(".txt"): 
 								
 				t = os.path.join(txt_path,file)	
-										
-				df=pd.read_csv(os.path.join(path_to_dir,file),sep=" ",header=None,index_col=None)														  
 				
+				try:						
+					df=pd.read_csv(os.path.join(path_to_dir,file),sep=" ",header=None,index_col=None)														  
+				
+				except:
+					print("Empty file")
+					file_name=os.path.splitext(file)[0]+".jpg"
+					
+					# delete the corresponding image of the empty txt file.
+					#os.remove(os.path.join("C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\images\\Images",file_name))
+					continue
+				
+
 				#checks for the labels to be changed based on *combine_values and *combine_list.
 				# if len(combine_values)==len(combine_list):
 
@@ -153,12 +163,14 @@ def make_new_labels(path_to_dir,combine_values=None,separate_txt=True,separate_i
 	print("Number of images converted:{0}.".format(count_img))
 
 	
-#sample="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\yolo_labels_converted"
 
+
+
+#lambda_function= lambda x : x+1
 #lambda_function= lambda x : 7 if x==9 else x
 lambda_function= lambda x : x-1
 
-#make_new_labels(sample,20,30,list1=[2,3],list2=[1,7,8],incremenet_labels=True) 
-path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\images smaller than 768p_adjusted"
+#make_new_labels(path,labels_to_drop=[0,7,8,10,11])
+path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\yolo_labels_converted"
 
-make_new_labels(path,change_labels_function=lambda_function,labels_to_drop=[0,7,8,10,11])
+make_new_labels(path,change_labels_function=lambda_function)

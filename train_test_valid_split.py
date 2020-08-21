@@ -1,7 +1,12 @@
 import numpy as np
 import os
 from PIL import Image
-
+import torch
+import torchvision
+import torch
+import shutil
+import sys
+torch.manual_seed(1)
 
 
 class TrainTestValid:
@@ -17,9 +22,7 @@ class TrainTestValid:
 
 	def __init__(self,train_size,test_size,valid_size=None):
 		"""
-		img_path assumes images and annotations are stored in a single directory.
-		If different directories, pass the path to annot_path seperately.
-		train_size default,test_size take fractions, like 0.7,0.3 etc.
+		Splits based on numpy random.
 		"""
 		self.train_size=train_size
 		self.test_size=test_size
@@ -138,21 +141,13 @@ class TrainTestValid:
 
 
 
-#sample=TrainTestValid(0.7,0.2,valid_size=0.1).train_test_split_single_path(path)
-#sample=TrainTestValid(0.7,0.3).train_test_split_different_paths(path1,path2)
 
-#---- #train,test,spllit with pytorch.
-import torch
-import torchvision
-import torch
-import shutil
-import sys
-torch.manual_seed(0)
+def pytorch_split(path_to_images,path_to_annotations,train_size,test_size,valid_size,annot_type="txt"):
 
-def pytorch_split(path_to_images,path_to_annotations,train_size,test_size,valid_size):
 	
 	"""
 	images and annotations are stored separately.
+	annot_type either txt or xml.
 	"""
 	n_images=sum([1 for image in os.listdir(path_to_images)])
 	print("The number of images is {}.".format(n_images))
@@ -187,19 +182,17 @@ def pytorch_split(path_to_images,path_to_annotations,train_size,test_size,valid_
 		full_img_path=os.path.join(path_to_images,image)
 		#print(full_img_path)
 		
-
-		try:
+		if annot_type=="txt":
 			full_ann_path=os.path.join(path_to_annotations,os.path.splitext(image)[0])+".txt"
 		
-		except Exception:
-			pass
-
-			try:
-				full_ann_path=os.path.join(path_to_annotations,os.path.splitext(image)[0])+".xml"
+		elif annot_type=="xml":
+			full_ann_path=os.path.join(path_to_annotations,os.path.splitext(image)[0])+".xml"	
 		
-			except:	
-				print("Not a txt or an xml file.")
+		else:
+			raise TypeError ("Incorrect extension type.")
 
+
+		
 
 		if index in train_dataset.indices:
 			
@@ -222,9 +215,9 @@ def pytorch_split(path_to_images,path_to_annotations,train_size,test_size,valid_
 	print("There are {} train, {} test, and {} valid_images.".format(n_train_images,n_test_images,n_val_images)) 
 
 				
-sample_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\images\\Images"
-sample_path2="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\annotations"
-pytorch_split(sample_path,sample_path2,700,200,95)
+sample_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\images\\images"
+sample_path2="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\yolo_annotations"
+pytorch_split(sample_path,sample_path2,700,95,200,annot_type="txt")
 
 
 

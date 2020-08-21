@@ -115,8 +115,7 @@ def conversion(txt_file_directory,image_directory,conversion_seq):
 
 
 
-img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_images"
-txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_annotations"
+
 
 
 sometimes=lambda aug: iaa.Sometimes(0.9,aug) 
@@ -138,7 +137,7 @@ seq=iaa.SomeOf((1,2),
 	])
 
 
-sometimes2=lambda aug: iaa.Sometimes(0.95,aug)
+sometimes2=lambda aug: iaa.Sometimes(0.95,aug) # probability is increased
 
 seq2=iaa.SomeOf((1,2),
 	[
@@ -180,7 +179,11 @@ seq3=iaa.SomeOf((1,2),
 	])
 
 
+#img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_images"
+#txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_annotations"
+img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\train_images"
+txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\train_annotations_yolo"
 
 if __name__=="__main__":		
- 	conversion(txt_path,img_path,seq2)
+ 	conversion(txt_path,img_path,seq3)
 
