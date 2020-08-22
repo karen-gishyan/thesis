@@ -11,7 +11,7 @@ pillow==7.1.0
 opencv-python
 
 torch==1.3
-torchvision
+torchvision==0.4.0
 efficientnet_pytorch
 
 
