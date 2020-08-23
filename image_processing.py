@@ -86,15 +86,26 @@ def conversion(txt_file_directory,image_directory,conversion_seq):
 				w = float((after.x2 - after.x1)) / image_aug.shape[1]
 				h = float((after.y2 - after.y1)) / image_aug.shape[0]
 
+				#if (xcen >0 and ycen>0 and w>0 and h>0):
 				l1=[label,xcen, ycen, w, h] 
-
 				l.append(l1)
+				
 
 			label_array=np.array(label_list)
 			yolo_array=np.array(l)
 			
 			yolo_array[:,0]=np.array(list(map(lambda x: int(x),label_array)))
 
+			# remove_list=[]
+			# for index, row in enumerate(yolo_array):
+			# 	if any(i<0 for i in row):
+			# 		remove_list.append(index)
+
+			# yolo_array=np.delete(yolo_array,remove_list,axis=0)
+
+
+			# the preceeding commented code  and proceeding one liner  are equivalent.
+			yolo_array=yolo_array[~np.any(yolo_array<0,axis=1)] # drop all negative annotations resulting from geometric transformations.
 			# if does not exists, creates then saves.
 			txt=os.path.splitext(txt)[0]+"a"+".txt"
 			with open(os.path.join(txt_sav_dir,txt),"wt", encoding='ascii') as stream: 		
@@ -144,7 +155,7 @@ seq2=iaa.SomeOf((1,2),
 	
 	sometimes2(iaa.AdditiveGaussianNoise(scale=(10, 70))),
 	
-	#sometimes(iaa.AverageBlur(k=(3, 5))), # varying kernel size.
+	#sometimes(iaa.AverageBlur(k=(3, 5))), # varying kernel size. 
 	
 	sometimes2(iaa.GaussianBlur(sigma=(1.0, 3.0))), # not the same as gaussian noise.
 
@@ -162,27 +173,33 @@ seq2=iaa.SomeOf((1,2),
 	])
 
 
+sometimes3=lambda aug: iaa.Sometimes(0.93,aug)
+
 seq3=iaa.SomeOf((1,2),
 	[
 	
-	sometimes(iaa.Affine(scale=1.5)), # with 0.1 lets say, gives a user warning of low contrast image.
+	#sometimes3(iaa.Affine(scale=1.5)), # cuts out part of the objects, resulting in negative coordinates..
  
-	sometimes(iaa.ElasticTransformation(alpha=(30, 45.0), sigma=5.0)),
+	sometimes3(iaa.ElasticTransformation(alpha=(20, 30.0), sigma=5.0)),
 
-	sometimes(iaa.Rot90((1, 3), keep_size=False)), # On 90,270 transformation, the width and height change.
+	sometimes3(iaa.Rot90((1, 3), keep_size=False)), # On 90,270 transformation, the width and height change.
 
-	sometimes(iaa.Rotate((-30, 30))),
+	sometimes3(iaa.Rotate((-30, 30))),
 
-	sometimes(iaa.WithPolarWarping(iaa.AveragePooling((2, 7))))
+	sometimes3(iaa.WithPolarWarping(iaa.AveragePooling((2, 7)))),
+	
+	sometimes3(iaa.ShearY((30, 50))), 
+	
+	sometimes3(iaa.ShearX((30, 70))),
 
-
+	 
 	])
 
 
-#img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_images"
-#txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_annotations"
-img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\train_images"
-txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\train_annotations_yolo"
+img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_images"
+txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_annotations"
+#img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\train_images"
+#txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\train_annotations_yolo"
 
 if __name__=="__main__":		
  	conversion(txt_path,img_path,seq3)
