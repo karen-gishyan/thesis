@@ -105,7 +105,10 @@ def conversion(txt_file_directory,image_directory,conversion_seq):
 
 
 			# the preceeding commented code  and proceeding one liner  are equivalent.
+			
 			yolo_array=yolo_array[~np.any(yolo_array<0,axis=1)] # drop all negative annotations resulting from geometric transformations.
+			yolo_array=yolo_array[~np.any(yolo_array>1,axis=1)]
+			
 			# if does not exists, creates then saves.
 			txt=os.path.splitext(txt)[0]+"a"+".txt"
 			with open(os.path.join(txt_sav_dir,txt),"wt", encoding='ascii') as stream: 		
@@ -122,8 +125,8 @@ def conversion(txt_file_directory,image_directory,conversion_seq):
 			#ia.imshow(image_aug)
 
 			count+=1
-			print("{} annotations and images have been transformed!!".format(count))
-
+			if count%10==0:
+				print("{} annotations and images have been transformed!!".format(count))
 
 
 
@@ -196,10 +199,10 @@ seq3=iaa.SomeOf((1,2),
 	])
 
 
-img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_images"
-txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_annotations"
-#img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\train_images"
-#txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\train_annotations_yolo"
+#img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_images"
+#txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_annotations"
+img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\train_images"
+txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\train_annotations_yolo"
 
 if __name__=="__main__":		
  	conversion(txt_path,img_path,seq3)

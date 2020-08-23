@@ -51,8 +51,8 @@ def convert(image_path,annotation_path,save_path):
 
 
 if __name__=="__main__":
-    annotation_path = "C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation 3\\train_annotations_yolo" # should include the classes as well.
-    image_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation 3\\train_images"
-    save_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation 3\\train_annotations_xml"
+    annotation_path = "C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation 3 new new\\train_annotations_yolo" # should include the classes as well.
+    image_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation 3 new new\\train_images"
+    save_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation 3 new new\\train_annotations_xml"
 
     convert(image_path,annotation_path,save_path)
