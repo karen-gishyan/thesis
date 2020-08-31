@@ -1,7 +1,6 @@
 #https://eecs.oregonstate.edu/ecampus-video/CS161/template/chapter_5/nested.html#:~:text=Using%20break%20in%20a%20nested,all%20of%20the%20looping%20stops.
 #break in  nested loop behaves differently, the outer loop keeps on executing.
 
-
 import os
 import sys
 import xml.etree.ElementTree as ET
@@ -12,15 +11,18 @@ from visualize import visualize_bounding_box
 
 	
 
-def horizontal_grid_augment(annot_path,imgs_path,combine_img_number,desired_augment_number=None,min_width=False,decrease_width_size=1,im_save_path=None,xml_save_path=None):
+def horizontal_grid_augment(annot_path,imgs_path,combine_img_number,desired_augment_number=None,min_width=False,custom_reshape=None,im_save_path=None,xml_save_path=None):
 
 	"""
 	combine_img_number=number of images to combine horizontally.
 	min_width=if True, all the images are resized to the mininum existing image width.Default-their original widths are adjusted with height.
 	desired_augment_number-how many gridlike images to generate,cannot exceed the number of original images.
 	decrease_width_size=how many times to decrease the width before saving.
-	"""
 
+	min_width  and custom reshape are mutually exclusive. If one is True, the other is None, and if custom reshape is None, the other should be False.
+	
+	custom reshape reshapes the individual images all to the same width, height and not the full image.
+	"""
 
 	new_xml_dir_path= im_save_path if im_save_path!=None else os.path.join(os.path.dirname(annot_path),"grid_horizontal_xmls") 
 	new_img_dir_path= xml_save_path if xml_save_path!=None else os.path.join(os.path.dirname(annot_path),"grid_horizontal_images")
@@ -32,94 +34,66 @@ def horizontal_grid_augment(annot_path,imgs_path,combine_img_number,desired_augm
 	if not os.path.exists(new_xml_dir_path):
 		os.makedirs(new_xml_dir_path)
 
-	sum_images=len(os.listdir(imgs_path))
-	half=sum_images//2
-	quarter=sum_images//4
-
-	#generators up to the number of dir images.
-	img_generator=(image for image in os.listdir(imgs_path))
-	img_generator_rev=(image for image in reversed(os.listdir(imgs_path)))
-	img_generator_upper=(image for image in os.listdir(imgs_path)[half:])
-	img_generator_lower=(image for image in os.listdir(imgs_path)[:half])
-	img_generator_middle=(image for image in os.listdir(imgs_path)[quarter:quarter])
-	img_generator_middle_rev=(image for image in reversed(os.listdir(imgs_path)[quarter:quarter]))
-
-	# This exhausts the generator.
-	#gen_sum=sum(1 for i in img_generator)
+	image_names=[im for im in os.listdir(imgs_path)]
+	
 	new_images_list=[]
 	new_annots_list=[]
 	iter_num=sum_images//combine_img_number if desired_augment_number==None else desired_augment_number
 
-	
+
 	for index, _ in enumerate(range(iter_num)):
 		
 		img_list=[]
 		annot_names=[]
+		# print("Loop",index+1)
 
-		for _ in range(combine_img_number): # every iteration generetas a combined image and an annotation.
+		for _ in range(combine_img_number): 
 
-			try:
-				img=next(img_generator) # if this generator is exhausted, takes images from the reversed generator.
-			except Exception as e:
-				pass
-				try:
-					img=next(img_generator_rev)
-				except Exception as e:
-					pass
-					try:
-						img=next(img_generator_upper)
-					except Exception as e:
-						pass
-						try:
-							img=next(img_generator_lower)
-						except Exception as e:
-							pass
-							try:
-								img=next(img_generator_middle)
-							except Exception as e:
-								pass
-								
-								try:
-									img=next(img_generator_middle_rev)
-								except Exception as e:
-									print(e)
-									sys.exit("Not enough images to unpack vertically, consider decreasing the desired_augment_number to less than {}.".format(desired_augment_number))
+			
+			ind=np.random.randint(0,len(image_names))
+			img=image_names[ind]
 
-						
 			img_full_path=os.path.join(imgs_path,img)
 			img_list.append(Image.open(img_full_path))
 
 			annot=os.path.splitext(img)[0]+".xml"
 			annot_names.append(annot)
-			
-		min_height = min(im.height for im in img_list)
-			
-		
+
+							
 		if min_width:
 			
+			min_height = min(im.height for im in img_list)
 			min_width=min(im.width for im in img_list)
+
 			im_list_resize = [im.resize((min_width, min_height),resample=Image.BICUBIC)
-						  for im in img_list]
-						  
+				for im in img_list]				  
+		
+		
+		elif custom_reshape!=None:
+
+			min_height=custom_reshape[1]
+		
+			im_list_resize = [im.resize((custom_reshape),resample=Image.BICUBIC) for im in img_list]
+
 		else:
+
+			min_height = min(im.height for im in img_list)
 			im_list_resize = [im.resize((int(im.width * min_height /im.height),min_height),resample=Image.BICUBIC)
 						  for im in img_list]
 			
 
-		size_diff=[i.size[0]/j.size[0] for i,j in zip(img_list,im_list_resize)] #both width and height are resized by the same amount.
-
+		size_diff=[(i.size[0]/j.size[0],i.size[1]/j.size[1]) for i,j in zip(img_list,im_list_resize)] #both width and height are resized by the same amount.
 		total_width = sum(im.width for im in im_list_resize)
-		
+				
 		new_image=Image.new('RGB', (total_width, min_height))
 		
-		np_image = np.array(new_image) # for depth
+		np_image = np.array(new_image) # to do np_image.shape[2] later.
 
 		new_image_name="grid_augment"+str(index+1)+".jpg"
 		
 		new_img_path=os.path.join(new_img_dir_path,new_image_name)
 
 		
-
 		write_xml=XML_Writer(new_image_name,new_img_path,new_image.width,new_image.height,np_image.shape[2])
 		r=write_xml.create_tag()
 
@@ -149,18 +123,17 @@ def horizontal_grid_augment(annot_path,imgs_path,combine_img_number,desired_augm
 				ymax=int(box.find("ymax").text)
 				
 				#resize bounding boxes of resize images before shifting.
-				xmin=int(xmin//size_diff[i])
-				xmax=int(xmax//size_diff[i])
-				ymin=int(ymin//size_diff[i])
-				ymax=int(ymax//size_diff[i])
-					
+				
+				xmin=int(xmin/size_diff[i][0])
+				xmax=int(xmax/size_diff[i][0])
+				ymin=int(ymin/size_diff[i][1])
+				ymax=int(ymax/size_diff[i][1])
+				#sys.exit()
 
 				shift=x_position-img.width
 				
 				write_xml.add_object(r,xmin+shift,ymin,xmax+shift,ymax,name)
 	
-		
-		new_image=new_image.resize((new_image.width//decrease_width_size,new_image.height))
 		
 		new_images_list.append(new_image)
 		new_annots_list.append(r)		
@@ -173,11 +146,10 @@ def horizontal_grid_augment(annot_path,imgs_path,combine_img_number,desired_augm
 
 
 
-
-def vertical_grid_augment(annot_path,imgs_path,combine_img_number,desired_augment_number=None,min_height=False,decrease_height_size=1,im_save_path=None,xml_save_path=None):
+def vertical_grid_augment(annot_path,imgs_path,combine_img_number,desired_augment_number=None,custom_reshape=None,min_height=False,im_save_path=None,xml_save_path=None):
 
 	"""
-	You either provide an imgs_path or a list of horizontal
+	Height and custom_reshape are mutually exclusive. Provide either one or the other.
 	"""
 
 	new_xml_dir_path= xml_save_path if im_save_path!=None else os.path.join(os.path.dirname(annot_path),"grid_vertical_xmls") 
@@ -189,23 +161,12 @@ def vertical_grid_augment(annot_path,imgs_path,combine_img_number,desired_augmen
 
 	if not os.path.exists(new_xml_dir_path):
 		os.makedirs(new_xml_dir_path)
-
 	
-	sum_images=len(os.listdir(imgs_path))
-	half=sum_images//2
-	quarter=sum_images//4
-
-	img_generator=(image for image in os.listdir(imgs_path))
-	img_generator_rev=(image for image in reversed(os.listdir(imgs_path)))
-	img_generator_upper=(image for image in os.listdir(imgs_path)[half:])
-	
-	img_generator_lower=(image for image in os.listdir(imgs_path)[:half])
-	img_generator_middle=(image for image in os.listdir(imgs_path)[quarter:quarter])
-	img_generator_middle_rev=(image for image in reversed(os.listdir(imgs_path)[quarter:quarter]))	
-
 	new_images_list=[]
 	new_annots_list=[]
+	image_names=[im for im in os.listdir(imgs_path)]
 
+	
 	iter_num=sum_images//combine_img_number if desired_augment_number==None else desired_augment_number
 
 	
@@ -216,35 +177,8 @@ def vertical_grid_augment(annot_path,imgs_path,combine_img_number,desired_augmen
 
 		for _ in range(combine_img_number):
 
-			try:
-
-				img=next(img_generator) 
-			except Exception as e:
-				pass
-				try:
-					img=next(img_generator_rev)
-				except Exception as e:
-					pass
-					try:
-						img=next(img_generator_upper)
-					except Exception as e:
-						pass
-						try:
-							img=next(img_generator_lower)
-						except Exception as e:
-							pass
-							try:
-								img=next(img_generator_middle)
-							except Exception as e:
-								pass
-								
-								try:
-									img=next(img_generator_middle_rev)
-								except Exception as e:
-									print(e)
-									sys.exit("Not enough images to unpack vertically, consider decreasing the desired_augment_number to less than {}.".format(desired_augment_number))
-
-
+			ind=np.random.randint(0,len(image_names))
+			img=image_names[ind]
 
 			img_full_path=os.path.join(imgs_path,img)
 			img_list.append(Image.open(img_full_path))
@@ -252,23 +186,30 @@ def vertical_grid_augment(annot_path,imgs_path,combine_img_number,desired_augmen
 			annot=os.path.splitext(img)[0]+".xml"
 			annot_names.append(annot)
 			
-		min_width = min(im.width for im in img_list)
-
 		#resize the weights based on the mininum height.
 
-		if min_height:
+		if min_height: 
 			
+			min_width = min(im.width for im in img_list)
 			min_height=min(im.height for im in img_list)
 			im_list_resize = [im.resize((min_width, min_height),resample=Image.BICUBIC)
 						  for im in img_list]
 		
+
+		elif custom_reshape!=None:
+
+			min_width=custom_reshape[0]
+			im_list_resize = [im.resize((custom_reshape),resample=Image.BICUBIC) for im in img_list]
+
 		else:	
+
+			min_width = min(im.width for im in img_list)
 			im_list_resize = [im.resize((min_width, int(im.height * min_width / im.width)),resample=Image.BICUBIC)
 					  for im in img_list]
 
 
+		size_diff=[(i.size[0]/j.size[0],i.size[1]/j.size[1]) for i,j in zip(img_list,im_list_resize)]
 
-		size_diff=[i.size[0]/j.size[0] for i,j in zip(img_list,im_list_resize)]
 
 		total_height = sum(im.height for im in im_list_resize)
 		
@@ -286,7 +227,7 @@ def vertical_grid_augment(annot_path,imgs_path,combine_img_number,desired_augmen
 
 		y_position=0
 
-		for i, (img,annot) in enumerate(zip(im_list_resize,annot_names)): # the first one need to be the
+		for i, (img,annot) in enumerate(zip(im_list_resize,annot_names)): 
 
 			new_image.paste(img,(0,y_position))
 			y_position+=img.height
@@ -304,28 +245,27 @@ def vertical_grid_augment(annot_path,imgs_path,combine_img_number,desired_augmen
 				name=str(object.find("name").text)		
 				box= object.find("bndbox")
 
+
 				xmin=int(box.find("xmin").text)
 				ymin=int(box.find("ymin").text)
 				xmax=int(box.find("xmax").text)
 				ymax=int(box.find("ymax").text)
 				
-				xmin=int(xmin//size_diff[i])
-				xmax=int(xmax//size_diff[i])
-				ymin=int(ymin//size_diff[i])
-				ymax=int(ymax//size_diff[i])
-
-					
+				#resize based on new width and height.
+				
+				xmin=int(xmin/size_diff[i][0])
+				xmax=int(xmax/size_diff[i][0])
+				ymin=int(ymin/size_diff[i][1])
+				ymax=int(ymax/size_diff[i][1])
+									
 				shift=y_position-img.height
 				write_xml.add_object(r,xmin,ymin+shift,xmax,ymax+shift,name)
 			
-		
-		new_image=new_image.resize((new_image.width,new_image.height//decrease_height_size))	
+			
 		new_images_list.append(new_image)
 		new_annots_list.append(r)		
-		
-		
-		new_image.save(new_img_path)
 
+		new_image.save(new_img_path)
 	
 		write_xml.save_xml(r,new_xml_dir_path,new_image_name)
 
@@ -334,10 +274,12 @@ def vertical_grid_augment(annot_path,imgs_path,combine_img_number,desired_augmen
 	return new_img_dir_path,new_xml_dir_path
 
 
-
 def mosaic_augment(annot_path,imgs_path,size=(3,4),
-	mininum_width=False,mininum_height=False, dec_width=1,dec_height=1,
-	total_images=None):
+	mininum_width=False,mininum_height=False,
+	desired_total_horizontal_images=10,total_images=15,custom_horizontal_reshape=None):
+	
+	# the more the desired_total_horizontal_images, the more the variation in total images.
+	#Perfecr squares can be generated by passing (n,n) tuple to custom_horizontal_reshape. (352,353) or (1080,1080W)
 
 	new_xml_dir_path=os.path.join(os.path.dirname(annot_path),"grid_mosaic_xmls")
 	new_img_dir_path=os.path.join(os.path.dirname(imgs_path),"grid_mosaic_images")
@@ -349,14 +291,11 @@ def mosaic_augment(annot_path,imgs_path,size=(3,4),
 		os.makedirs(new_xml_dir_path)
 
 
-
 	horiz_im_dir_path,horiz_xml_dir_path=horizontal_grid_augment(annot_path,imgs_path,combine_img_number=size[0],
-		desired_augment_number=200,min_width=mininum_width,decrease_width_size=dec_width)
+		desired_augment_number=desired_total_horizontal_images,min_width=mininum_width,custom_reshape=custom_horizontal_reshape)
 
 	vertical_grid_augment(horiz_xml_dir_path,horiz_im_dir_path,combine_img_number=size[1],
-		xml_save_path=new_xml_dir_path,im_save_path=new_img_dir_path,decrease_height_size=dec_height,desired_augment_number=100)
-
-
+		xml_save_path=new_xml_dir_path,im_save_path=new_img_dir_path,desired_augment_number=total_images)
 
 
 class XML_Writer:
@@ -407,7 +346,6 @@ class XML_Writer:
 		root.append(self.obj)
 		
 
-
 	def save_xml(self,root,new_xml_dir_path,img_name):
 
 		s = etree.tostring(root, pretty_print=True)
@@ -421,17 +359,22 @@ class XML_Writer:
 
 if __name__ == '__main__':
 
-	#annot_path="C:/Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\train_annots_sample"
-	#images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\train_img_sample"
-
-	#annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\train_annotations_xml"
-	#images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\train_images"
 	
-	mosaic_augment(annot_path,images_path,size=(3,4))
+	#path to original images and annotations.
 
-	annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\grid_mosaic_xmls"
-	images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\grid_mosaic_images"
+	annot_path="C:/Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\train_annots_sample"
+	images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\train_img_sample"
+
+
+	#horizontal_grid_augment(annot_path,images_path,3,desired_augment_number=5,custom_reshape=(416,300)) #,#
+	#vertical_grid_augment(annot_path,images_path,5,desired_augment_number=5,min_height=True)#,
+	mosaic_augment(annot_path,images_path,size=(5,5),desired_total_horizontal_images=3,total_images=3)#custom_horizontal_reshape=(352,352)	
 	
+	#path to new xmls and images.
+
+	annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\grid_mosaic_xmls"
+	images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\grid_mosaic_images"
+
 	visualize_bounding_box(annot_path,images_path)
 
 
