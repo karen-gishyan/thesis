@@ -5,12 +5,18 @@ from imgaug.augmentables.bbs import BoundingBox, BoundingBoxesOnImage
 from PIL import Image
 import xml.etree.ElementTree as ET
 import os
+from scipy import misc
 
 
 
-def visualize_bounding_box(annot_path,images_path):
+def visualize_bounding_box(annot_path,images_path,save=True):
 
+	save_path=os.path.join(os.path.dirname(images_path),"images_with_bounding_boxes")
 
+	if not os.path.exists(save_path):
+		os.makedirs(save_path)
+
+	count=0
 	for xml in os.listdir(annot_path):
 
 		bounding_box_list=[]
@@ -41,14 +47,21 @@ def visualize_bounding_box(annot_path,images_path):
 		bbs = BoundingBoxesOnImage(bounding_box_list, shape=image.size) 
 
 		with_boxes=bbs.draw_on_image(image,size=2)
-		ia.imshow(with_boxes)
+		
+		count+=1
+		if count<3:
+			ia.imshow(with_boxes)
+		
+		if save:
+			im=Image.fromarray(with_boxes)
+			im.save(os.path.join(save_path,os.path.splitext(xml)[0]+".jpg"))
 		
 
-annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\grid_horizontal_xmls"
-images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\grid_horizontal_images"
-
-
-visualize_bounding_box(annot_path,images_path)
+	
+if __name__=="__main__":
+	annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\grid_horizontal_xmls"
+	images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\grid_horizontal_images"
+	visualize_bounding_box(annot_path,images_path)
 
 
 
