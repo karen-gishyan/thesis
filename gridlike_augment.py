@@ -1,7 +1,3 @@
- 
-#https://eecs.oregonstate.edu/ecampus-video/CS161/template/chapter_5/nested.html#:~:text=Using%20break%20in%20a%20nested,all%20of%20the%20looping%20stops.
-#break in  nested loop behaves differently, the outer loop keeps on executing.
-
 import os
 import sys
 import time
