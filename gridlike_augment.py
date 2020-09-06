@@ -1,3 +1,4 @@
+ 
 #https://eecs.oregonstate.edu/ecampus-video/CS161/template/chapter_5/nested.html#:~:text=Using%20break%20in%20a%20nested,all%20of%20the%20looping%20stops.
 #break in  nested loop behaves differently, the outer loop keeps on executing.
 
@@ -19,7 +20,6 @@ def horizontal_grid_augment(annot_path,imgs_path,combine_img_number,desired_augm
 	min_width=if True, all the images are resized to the mininum existing image width.Default-their original widths are adjusted with height.
 	desired_augment_number-how many gridlike images to generate,cannot exceed the number of original images.
 	decrease_width_size=how many times to decrease the width before saving.
-
 	min_width  and custom reshape are mutually exclusive. If one is True, the other is None, and if custom reshape is None, the other should be False.
 	
 	custom reshape reshapes the individual images all to the same width, height and not the full image.
@@ -81,7 +81,7 @@ def horizontal_grid_augment(annot_path,imgs_path,combine_img_number,desired_augm
 			min_height = min(im.height for im in img_list)
 			im_list_resize = [im.resize((int(im.width * min_height /im.height),min_height),resample=Image.BICUBIC)
 						  for im in img_list]
-			
+
 
 		size_diff=[(i.size[0]/j.size[0],i.size[1]/j.size[1]) for i,j in zip(img_list,im_list_resize)] #both width and height are resized by the same amount.
 		total_width = sum(im.width for im in im_list_resize)
@@ -215,9 +215,11 @@ def vertical_grid_augment(annot_path,imgs_path,combine_img_number,desired_augmen
 
 		else: #takes effect when height differ.
 
+			
 			min_width = min(im.width for im in img_list)
 			im_list_resize = [im.resize((min_width, int(im.height * min_width / im.width)),resample=Image.BICUBIC)
 					  for im in img_list]
+
 
 
 		size_diff=[(i.size[0]/j.size[0],i.size[1]/j.size[1]) for i,j in zip(img_list,im_list_resize)]
@@ -376,27 +378,24 @@ if __name__ == '__main__':
 	
 	#path to original images and annotations.
 
-	#annot_path="C:/Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\train_annots_sample"
-	#images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\train_img_sample"
-	annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\grid_horizontal_xmls"
-	images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\grid_horizontal_images"
+	annot_path="C:/Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\train_annots_sample"
+	images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\train_img_sample"
+	
 	start=time.time()
 	
-	#horizontal_grid_augment(annot_path,images_path,3,desired_augment_number=700,custom_reshape=(352,352)) #35 seconds running time with 700 imags.
-	#vertical_grid_augment(annot_path,images_path,4,desired_augment_number=700)#, running time-45 seconds.
-	#mosaic_augment(annot_path,images_path,size=(5,5),desired_total_horizontal_images=3,total_images=3)#custom_horizontal_reshape=(352,352)	
+	horizontal_grid_augment(annot_path,images_path,3,desired_augment_number=3)#,custom_reshape=(352,352# #35 seconds running time with 700 imags.
+	#vertical_grid_augment(annot_path,images_path,4,desired_augment_number=10)#, running time-45 seconds.
+	#mosaic_augment(annot_path,images_path,size=(3,5),desired_total_horizontal_images=5,total_images=5)#custom_horizontal_reshape=(352,352)	
 	print("Running Time is: %.3f seconds." % (time.time()-start))
+	
 	#path to new xmls and images.
-
-	annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\grid_vertical_xmls"
-	images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\grid_vertical_images"
+	annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation (3,5) with blurred images\\grid_mosaic_xmls"
+	images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation (3,5) with blurred images\\grid_mosaic_images"
 
 	#applies to transformed annotations.
 	hname="h_images_with_bounding_boxes"
 	vname="v_images_with_bounding_boxes"
 	mname="m_images_with_bounding_boxes"
 	visualize_bounding_box(annot_path,images_path,name=mname)
-
-
 
 
