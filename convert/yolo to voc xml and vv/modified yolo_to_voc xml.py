@@ -10,8 +10,10 @@ except ImportError:
     from PyQt4.QtGui import QImage
 
  
-def convert(image_path,annotation_path,save_path):
-   
+def convert(image_path,annotation_path):
+
+    save_path=os.path.join(os.path.dirname(annotation_path),"xml_converted")   
+    if not os.path.exists(save_path): os.makedirs(save_path)
     
     for file in os.listdir(annotation_path):
         if file.endswith(".txt") and file != "classes.txt":
@@ -51,8 +53,8 @@ def convert(image_path,annotation_path,save_path):
 
 
 if __name__=="__main__":
-    annotation_path = "C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation 3 new new\\train_annotations_yolo" # should include the classes as well.
-    image_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation 3 new new\\train_images"
-    save_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation 3 new new\\train_annotations_xml"
-
-    convert(image_path,annotation_path,save_path)
+    
+    image_path= "C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\combined\\train_images" # should include the classes as well.
+    annotation_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\combined\\train_annotations"
+ 
+    convert(image_path,annotation_path)

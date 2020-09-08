@@ -1,0 +1,14 @@
+dataset collection/
+Dissertation Progress/
+Handpicked images and Videos/
+Visdrone Labeled Images/
+VisDrone2019-DET-train/
+VisDrone2019-DET-val/
+weights/
+__pycache__/
+various/
+
+
+#
+*names
+

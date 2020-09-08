@@ -12,11 +12,11 @@ except ImportError:
     from PyQt4.QtGui import QImage
 
 
-imgFolderPath = "C:\\Users\\Կարեն\\Desktop\\Bath Thesis\\VisDrone2019-DET-train\\annotations plus images"
-
 # Search all pascal annotation (xml files) in this folder
+def convert(image_path,annotation_path):
 
-def convert(image_path,annotation_path,save_path):
+    save_path=os.path.join(os.path.dirname(annotation_path),"xml_converted")
+    if not os.path.exists(save_path): os.makedirs(save_path)
 
     for file in os.listdir(annotation_path):
         if file.endswith(".xml"):
@@ -52,13 +52,13 @@ def convert(image_path,annotation_path,save_path):
                 y_max = shapes[i][1][2][1]
 
                 writer.addBndBox(xmin, ymin, x_max, y_max, label, 0)
-
+        
             writer.save(targetFile= save_path + "/" + annotation_no_xml + ".txt")
-
+    
 
 if __name__=="__main__":
-    annotation_path = "C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation (3,5) with blurred images\\train_annotations_xml" # should include the classes as well.
-    image_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation (3,5) with blurred images\\train_images"
-    save_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation (3,5) with blurred images\\train_labels"
 
-    convert(image_path,annotation_path,save_path)
+    image_path= "C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\combined\\final\\train_images" # should include the classes as well.
+    annotation_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\combined\\final\\train_labels_xml"
+ 
+    convert(image_path,annotation_path)

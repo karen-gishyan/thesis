@@ -142,14 +142,23 @@ class TrainTestValid:
 
 
 
-def pytorch_split(path_to_images,path_to_annotations,train_size,test_size,valid_size,annot_type="txt"):
+def pytorch_split(path_to_images,path_to_annotations,train_prop=0.7,test_prop=0.1,valid_prop=0.2,annot_type="txt"):
 
 	
 	"""
 	images and annotations are stored separately.
 	annot_type either txt or xml.
 	"""
+
 	n_images=sum([1 for image in os.listdir(path_to_images)])
+	train_size=int(n_images*train_prop)
+	test_size=int(n_images*test_prop)
+	valid_size=int(n_images*valid_prop)
+
+	diff=n_images-(train_size+test_size+valid_size)
+	train_size+=diff
+	
+
 	print("The number of images is {}.".format(n_images))
 
 	pytorch_path=os.path.dirname(path_to_images)
@@ -176,7 +185,6 @@ def pytorch_split(path_to_images,path_to_annotations,train_size,test_size,valid_
 		
 	for index, image in enumerate(os.listdir(path_to_images)):
 		
-
 		assert(os.path.splitext(image)[1] in [".png",".jpg"])
 
 		full_img_path=os.path.join(path_to_images,image)
@@ -191,8 +199,6 @@ def pytorch_split(path_to_images,path_to_annotations,train_size,test_size,valid_
 		else:
 			raise TypeError ("Incorrect extension type.")
 
-
-		
 
 		if index in train_dataset.indices:
 			
@@ -213,11 +219,11 @@ def pytorch_split(path_to_images,path_to_annotations,train_size,test_size,valid_
 	n_val_images=len(os.listdir(valid_images))
 
 	print("There are {} train, {} test, and {} valid_images.".format(n_train_images,n_test_images,n_val_images)) 
-
 				
-sample_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\images\\images"
-sample_path2="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\yolo_annotations"
-pytorch_split(sample_path,sample_path2,700,95,200,annot_type="txt")
+im_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\img\\images"
+annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\annotations_correct"
+
+pytorch_split(im_path,annot_path,train_prop=0.5,test_prop=0.05,valid_prop=0.45,annot_type="txt")
 
 
 

@@ -374,19 +374,19 @@ if __name__ == '__main__':
 	
 	#path to original images and annotations.
 
-	annot_path="C:/Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\train_annots_sample"
-	images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\train_img_sample"
+	annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\combined\\train_labels_xml"
+	images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\combined\\train_images"
 	
 	start=time.time()
 	
-	horizontal_grid_augment(annot_path,images_path,3,desired_augment_number=3)#,custom_reshape=(352,352# #35 seconds running time with 700 imags.
+	#horizontal_grid_augment(annot_path,images_path,3,desired_augment_number=3)#,custom_reshape=(352,352# #35 seconds running time with 700 imags.
 	#vertical_grid_augment(annot_path,images_path,4,desired_augment_number=10)#, running time-45 seconds.
-	#mosaic_augment(annot_path,images_path,size=(3,5),desired_total_horizontal_images=5,total_images=5)#custom_horizontal_reshape=(352,352)	
+	mosaic_augment(annot_path,images_path,size=(3,4),desired_total_horizontal_images=110,total_images=110)#custom_horizontal_reshape=(352,352)	
 	print("Running Time is: %.3f seconds." % (time.time()-start))
-	
+		
 	#path to new xmls and images.
-	annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation (3,5) with blurred images\\grid_mosaic_xmls"
-	images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation (3,5) with blurred images\\grid_mosaic_images"
+	annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\combined\\grid_mosaic_xmls"
+	images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\combined\\grid_mosaic_images"
 
 	#applies to transformed annotations.
 	hname="h_images_with_bounding_boxes"

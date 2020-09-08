@@ -22,7 +22,7 @@ if __name__=="__main__":
 	for index,name in enumerate(df.columns):
 		print(index,name)
 
-	plot(df,map_05_indices,names,title="mAP 0.5: RetinaNet",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Percentage",percentage=True)
-	plot(df,map0_05_095_indices,names,title="mAP 0.5:0.95: RetinaNet",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Percentage",percentage=True)
-	plot(df,train_running_loss,names,title="Running Training Loss: RetinaNet",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Value")
+	plot(df,map_05_indices,names,title="mAP 0.5: RetinaNet",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Percentage",percentage=True,legend_outside=False)
+	plot(df,map0_05_095_indices,names,title="mAP 0.5:0.95: RetinaNet",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Percentage",percentage=True,legend_outside=False)
+	plot(df,train_running_loss,names,title="Running Training Loss: RetinaNet",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Value",legend_outside=False)
 	

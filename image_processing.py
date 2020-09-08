@@ -21,8 +21,10 @@ def conversion(txt_file_directory,image_directory,conversion_seq):
 	img_save_dir=os.path.join(os.path.split(image_directory)[0],"images_transformed") 
 	txt_sav_dir=os.path.join(os.path.split(txt_file_directory)[0],"yolo_annotations_transformed")
 	
-	if not os.path.exists(img_save_dir) and not os.path.exists(txt_sav_dir):
+	if not os.path.exists(img_save_dir):
 		os.makedirs(img_save_dir)
+
+	if not os.path.exists(txt_sav_dir):
 		os.makedirs(txt_sav_dir)
 
 	# sepereted directories is good to make sure we loop simultanouesly.
@@ -130,8 +132,6 @@ def conversion(txt_file_directory,image_directory,conversion_seq):
 
 
 
-
-
 sometimes=lambda aug: iaa.Sometimes(0.9,aug) 
 
 seq=iaa.SomeOf((1,2),
@@ -201,9 +201,9 @@ seq3=iaa.SomeOf((1,2),
 
 #img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_images"
 #txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_annotations"
-img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\train_images"
-txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Not Augmented\\train_annotations_yolo"
+img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\train_images"
+txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\train_annotations"
 
 if __name__=="__main__":		
- 	conversion(txt_path,img_path,seq3)
+ 	conversion(txt_path,img_path,seq2)
 

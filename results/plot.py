@@ -7,7 +7,7 @@ import sys
 
 
 def plot(dataset,list_indices,label_names_list,rolling_mean_windows_size=None,number_of_rows=None,title=None,
-	xlabel=None,ylabel=None,percentage=False):
+	xlabel=None,ylabel=None,percentage=False,legend_outside=True):
 	
 
 	for i in list_indices:
@@ -26,8 +26,8 @@ def plot(dataset,list_indices,label_names_list,rolling_mean_windows_size=None,nu
 		plt.plot(series*100,label=dataset.columns[i]) if percentage else plt.plot(series,label=dataset.columns[i])
 
 	#l=plt.legend(loc="best",fontsize=7, title_fontsize=7)
-	l=plt.legend(loc="upper left", bbox_to_anchor=(1.05, 1))
-	#l=plt.legend()
+	l=plt.legend(loc="upper left", bbox_to_anchor=(1.05, 1)) if legend_outside else plt.legend()
+
 
 	names=label_names_list
 	
