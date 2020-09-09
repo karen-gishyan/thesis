@@ -1,4 +1,5 @@
 import os
+import time
 import imageio
 import imgaug as ia
 from imgaug.augmentables.bbs import BoundingBox, BoundingBoxesOnImage
@@ -31,6 +32,7 @@ def conversion(txt_file_directory,image_directory,conversion_seq):
 	iterable= zip(os.listdir(image_directory),os.listdir(txt_file_directory)) 
 	
 	count=0
+
 	for img,txt in iterable:
 		bb_list=[]
 		l=[]
@@ -39,13 +41,17 @@ def conversion(txt_file_directory,image_directory,conversion_seq):
 		"""
 		the img and txt have need to match exactly.
 		"""
-		if img.endswith(".jpg") and txt.endswith(".txt") and img.strip(".jpg")== txt.strip(".txt"):
+		
+
+		if img.endswith(".jpg") and txt.endswith(".txt") and img.rstrip(".jpg")== txt.rstrip(".txt"):
+			
 
 			image = imageio.imread(os.path.join(image_directory,img))
 
 			file=open(os.path.join(txt_file_directory,txt))
 			
 			for line in file.readlines():	
+
 
 				"""
 				read from the yolo format, convert to pascal voc, which matches the bounding box requirements of 
@@ -127,7 +133,7 @@ def conversion(txt_file_directory,image_directory,conversion_seq):
 			#ia.imshow(image_aug)
 
 			count+=1
-			if count%10==0:
+			if count%50==0:
 				print("{} annotations and images have been transformed!!".format(count))
 
 
@@ -199,11 +205,12 @@ seq3=iaa.SomeOf((1,2),
 	])
 
 
-#img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_images"
-#txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\sample_annotations"
-img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\train_images"
-txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\train_annotations"
+
+img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final experiment\\train_images"
+txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final experiment\\train_labels"
+
 
 if __name__=="__main__":		
- 	conversion(txt_path,img_path,seq2)
-
+	start=time.time()
+	#conversion(txt_path,img_path,seq2)
+	print("Running Time is: %.3f seconds." % (time.time()-start))

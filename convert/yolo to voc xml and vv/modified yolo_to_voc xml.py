@@ -54,7 +54,7 @@ def convert(image_path,annotation_path):
 
 if __name__=="__main__":
     
-    image_path= "C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\combined\\train_images" # should include the classes as well.
-    annotation_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\combined\\train_annotations"
+    image_path= "C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final experiment\\train_images" # should include the classes as well.
+    annotation_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final experiment\\train_labels"
  
     convert(image_path,annotation_path)

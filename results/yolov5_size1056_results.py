@@ -17,12 +17,12 @@ names=["No Augmentation","Blending Sequence","Blurring Sequence","Geometric Sequ
 	
 if __name__=="__main__":
 
-	# for i in map_05_indices:
-	# 	print(max(df.iloc[:,i]))
+	for i in map_05_indices:
+		print(max(df.iloc[:,i]))
 
-	for index,name in enumerate(df.columns):
-		print(index,name)
+	# for index,name in enumerate(df.columns):
+	# 	print(index,name)
 	
-	plot(df,map_05_indices,names,title="mAP 0.5: Yolo version 5",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Percentage",percentage=True)		
-	plot(df,map0_095_indices,names,title="mAP 0.5:0.95: Yolo version 5",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Percentage",percentage=True)
-	plot(df,train_total_loss,names,title="Total Training Loss: Yolo version 5",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Value")
+	# plot(df,map_05_indices,names,title="mAP 0.5: Yolo version 5",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Percentage",percentage=True)		
+	# plot(df,map0_095_indices,names,title="mAP 0.5:0.95: Yolo version 5",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Percentage",percentage=True)
+	# plot(df,train_total_loss,names,title="Total Training Loss: Yolo version 5",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Value")

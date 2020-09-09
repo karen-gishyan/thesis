@@ -12,7 +12,9 @@ f1_indices=[11,26,41,56,71,101,146] #86
 total_loss=[5,20,35,50,65,95,140] #80
 
 
-names=["No Augmentation","Blending Sequence","Blurring Sequence","Geometric Sequence","(3x4) Grid Sequence","(3x5) Grid Sequence with Transfer Learning","Blur Sequence with (3x4) Sequence Transfer Learning"]
+names=["No Augmentation","Blending Sequence","Blurring Sequence","Geometric Sequence","(3x4) Grid Sequence",
+"(3x5) Grid Sequence with Transfer Learning",
+"Blur Sequence on (3x4) Sequence Transfer Learning"] #"Blurred (3x4) Sequence","Blurred (3x4) Sequence with Transfer Learning"
 
 
 if __name__=="__main__":

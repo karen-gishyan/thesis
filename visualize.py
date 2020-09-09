@@ -58,15 +58,15 @@ def visualize_bounding_box(annot_path,images_path,name="images_with_bounding_box
 		if save:
 			im=Image.fromarray(with_boxes)
 			im.save(os.path.join(save_path,os.path.splitext(xml)[0]+".jpg"))
-		
+
 
 	
 if __name__=="__main__":
 	
 	#annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\grid_horizontal_xmls"
 	#images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\trials\\grid_horizontal_images"
-	images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\images"
-	annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\own images\\xml_converted"
+	images_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final experiment\\train_images"
+	annot_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final experiment\\train_labels_xml"
 	visualize_bounding_box(annot_path,images_path)
 
 

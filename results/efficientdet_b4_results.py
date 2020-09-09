@@ -19,15 +19,15 @@ if __name__=="__main__":
 
 
 
-	# for i in iou_05_indexes:
-	# 	print(max(df.iloc[:,i]))
+	for i in iou_05_indexes:
+		print(max(df.iloc[:,i]))
 		
-	for index,name in enumerate(df.columns):
-		print(index,name)
+	# for index,name in enumerate(df.columns):
+	# 	print(index,name)
 
 		
-	plot(df,iou_05_indexes,names,title="mAP 0.5: EfficientDet",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Percentage",percentage=True,legend_outside=True)
-	plot(df,iou_095_indexes,names,title="mAP 0.5:0.95: EfficientDet",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Percentage",percentage=True,legend_outside=True)
-	plot(df,train_total_losses,names,title="Total Training Loss: EfficientDet",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Value",legend_outside=True)
+	# plot(df,iou_05_indexes,names,title="mAP 0.5: EfficientDet",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Percentage",percentage=True,legend_outside=True)
+	# plot(df,iou_095_indexes,names,title="mAP 0.5:0.95: EfficientDet",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Percentage",percentage=True,legend_outside=True)
+	# plot(df,train_total_losses,names,title="Total Training Loss: EfficientDet",rolling_mean_windows_size=3,xlabel="Epochs",ylabel="Value",legend_outside=True)
 	
-	
+	# 
