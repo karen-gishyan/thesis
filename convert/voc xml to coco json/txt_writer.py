@@ -15,5 +15,5 @@ def writetxt_for_json(path_to_xml):
 		print("Number of files written is {}.".format(count+1))
 
 
-path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final-dataset\\main\\Augmentation (3,5) with blurred images\\train_annotations_xml"
+path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\blend_blur_geometric_700\\train_labels_xml"
 writetxt_for_json(path)

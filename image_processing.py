@@ -49,7 +49,8 @@ def conversion(txt_file_directory,image_directory,conversion_seq):
 			image = imageio.imread(os.path.join(image_directory,img))
 
 			file=open(os.path.join(txt_file_directory,txt))
-			
+
+
 			for line in file.readlines():	
 
 
@@ -94,30 +95,20 @@ def conversion(txt_file_directory,image_directory,conversion_seq):
 				w = float((after.x2 - after.x1)) / image_aug.shape[1]
 				h = float((after.y2 - after.y1)) / image_aug.shape[0]
 
-				#if (xcen >0 and ycen>0 and w>0 and h>0):
+
 				l1=[label,xcen, ycen, w, h] 
 				l.append(l1)
 				
-
 			label_array=np.array(label_list)
 			yolo_array=np.array(l)
+
+	
+			yolo_array[:,0]=label_array
+
+			yolo_array=yolo_array[~np.any(yolo_array[:,1:]<0,axis=1)] 
+			yolo_array=yolo_array[~np.any(yolo_array[:,1:]>1,axis=1)]
+
 			
-			yolo_array[:,0]=np.array(list(map(lambda x: int(x),label_array)))
-
-			# remove_list=[]
-			# for index, row in enumerate(yolo_array):
-			# 	if any(i<0 for i in row):
-			# 		remove_list.append(index)
-
-			# yolo_array=np.delete(yolo_array,remove_list,axis=0)
-
-
-			# the preceeding commented code  and proceeding one liner  are equivalent.
-			
-			yolo_array=yolo_array[~np.any(yolo_array<0,axis=1)] # drop all negative annotations resulting from geometric transformations.
-			yolo_array=yolo_array[~np.any(yolo_array>1,axis=1)]
-			
-			# if does not exists, creates then saves.
 			txt=os.path.splitext(txt)[0]+"a"+".txt"
 			with open(os.path.join(txt_sav_dir,txt),"wt", encoding='ascii') as stream: 		
 				
@@ -206,11 +197,11 @@ seq3=iaa.SomeOf((1,2),
 
 
 
-img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final experiment\\train_images"
-txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\final experiment\\train_labels"
+img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\(3,4)-geometric"
+txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\(3,4)-geometric-labels"
 
 
 if __name__=="__main__":		
 	start=time.time()
-	#conversion(txt_path,img_path,seq2)
+	conversion(txt_path,img_path,seq3)
 	print("Running Time is: %.3f seconds." % (time.time()-start))
