@@ -197,9 +197,10 @@ seq3=iaa.SomeOf((1,2),
 
 
 
-img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\(3,4)-geometric"
-txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\(3,4)-geometric-labels"
-
+# img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\(3,4)-geometric"
+# txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\(3,4)-geometric-labels"
+img_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\main\\main\\main experiments\\Not Augmented\\train_images"
+txt_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\main\\main\\main experiments\\Not Augmented\\train_annotations_yolo"
 
 if __name__=="__main__":		
 	start=time.time()

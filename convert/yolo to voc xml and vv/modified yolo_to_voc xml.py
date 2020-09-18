@@ -54,7 +54,7 @@ def convert(image_path,annotation_path):
 
 if __name__=="__main__":
     
-    image_path= "C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\blend_blur_geometric_700\\train_images" # should include the classes as well.
-    annotation_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\blend_blur_geometric_700\\train_labels"
+    image_path= "C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\Geometric\\train_images" # should include the classes as well.
+    annotation_path="C:\\Users\\gishy\\Dropbox\\My PC (LAPTOP-SQRN8N46)\\Desktop\\Geometric\\train_labels"
  
     convert(image_path,annotation_path)
